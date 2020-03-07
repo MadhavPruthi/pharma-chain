@@ -1,0 +1,12 @@
+[
+    {
+        "function":"createSupplier",
+        "controller":"SupplychainController",
+        "verb":"post"
+    },
+    {
+        "function":"getAllCustomers",
+        "controller":"SupplychainController",
+        "verb":"get"
+    }
+]
