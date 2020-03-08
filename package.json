@@ -14,6 +14,7 @@
     "cc:start": "f() { npm run cc:package -- $1; npm run cc:install $1 $2; }; f",
     "cc:upgrade": "f() { npm run cc:package -- $1; hurl upgrade ${3:-$1} node $2  -P ./chaincode-$1; }; f",
     "cc:start:debug": "f() { npm run cc:package -- $1; npm run cc:install:debug $1 $2; }; f",
+    "start:rest-api":"f() { npx lerna bootstrap; npx lerna run start --scope server --stream; }; f",
     "===================INTERNALS===================": "===================NO NEED TO CALL THEM DIRECTLY===================",
     "lerna:install": "lerna bootstrap",
     "lerna:build": "lerna run build",

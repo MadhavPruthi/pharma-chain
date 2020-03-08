@@ -11,7 +11,7 @@ npm i
 # Create a new development blockchain network  - From the root of your project
 npm run env:restart
 # Install your smart contract
-npm run cc:start -- drug
+npm run cc:start -- supplychain
 # Make a testing call to create a record in the ledger
 # Beware that the first call may fail with a timeout! Just happens the first time
 hurl invoke drug drug_create "{\"name\":\"my first request\",\"id\":\"0001\",\"created\":0,\"modified\":0}"
@@ -58,14 +58,14 @@ hurl new
 
 ```
 # Package your smart contract's code  - From the root of your project
-npm run cc:package -- drug org1
+npm run cc:package -- supplychain org1
 # Install to your blockchain - From the root of your project
-hurl install drug node -P ./chaincode-drug
+hurl install drug node -P ./chaincode-supplychain
 # Install in debug mode, this will run the chaincode server locally so you can debug
-hurl install drug node -P ./chaincode-drug --debug
+hurl install drug node -P ./chaincode-supplychain --debug
 
 # Upgrade your existing chaincode - From the root of your project
-hurl upgrade drug node 1.2 -P ./chaincode-drug
+hurl upgrade drug node 1.2 -P ./chaincode-supplychain
 ```
 
 ## Start - if you don't have Hurley globally
@@ -83,21 +83,9 @@ npm run env:restart
 
 ```
 # Install to your blockchain - From the root of your project
-npm run cc:start -- drug
+npm run cc:start -- supplychain
 
 # Upgrade your existing chaincode - From the root of your project
-npm run cc:upgrade -- drug 1.2
+npm run cc:upgrade -- supplychain 1.2
 ```
 
-## Tests
-
-```
-npm run test
-```
-
-> Check all the information to work with Convector <a href="https://docs.covalentx.com/convector" target="_blank">in the DOCS site</a>.
-
-## Collaborate to the Convector Suite projects
-
-* <a href="https://community.covalentx.com" target="_blank">Discord chat with the community</a>
-* <a href="https://github.com/worldsibu" target="_blank">Convector projects</a>
