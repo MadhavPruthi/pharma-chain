@@ -9,13 +9,19 @@ import {
 import { Supplier } from './models/Supplier.model';
 import { Manufacturer } from './models/Manufacturer.model';
 import { Distributor } from './models/Distributor.model';
-import { Retailer } from './models/Retailer.model';
-import { Customer } from './models/Customer.model';
+import { Pharmacist } from './models/Pharmacist.model';
 
 import { GetById, GetAll, Create, Service } from '@worldsibu/convector-rest-api-decorators';
+import { DrugBatch } from './models/drugBatch.model';
+import { Drug } from './models/drug.model';
+import { Salt } from './models/salt.model';
 
 @Controller('supplychain')
 export class SupplychainController extends ConvectorController {
+
+  /* 
+  // Create Instances of Participants 
+  */
 
   @Create('Supplier')
   @Invokable()
@@ -23,6 +29,7 @@ export class SupplychainController extends ConvectorController {
     @Param(Supplier)
     supplier: Supplier
   ) {
+    supplier.x509Identity = this.sender;
     await supplier.save();
   }
 
@@ -32,6 +39,7 @@ export class SupplychainController extends ConvectorController {
     @Param(Manufacturer)
     manufacturer: Manufacturer
   ) {
+    manufacturer.x509Identity = this.sender;
     await manufacturer.save();
   }
 
@@ -41,26 +49,35 @@ export class SupplychainController extends ConvectorController {
     @Param(Distributor)
     distributor: Distributor
   ) {
+    distributor.x509Identity = this.sender;
     await distributor.save();
   }
 
-  @Create('Retailer')
+  @Create('Pharmacist')
   @Invokable()
-  public async createRetailer(
-    @Param(Retailer)
-    retailer: Retailer
+  public async createPharmacist(
+    @Param(Pharmacist)
+    pharmacist: Pharmacist
   ) {
-    await retailer.save();
+    pharmacist.x509Identity = this.sender;
+    await pharmacist.save();
   }
 
-  @Create('Customer')
+  /* 
+  // Create Salts
+  */
+
+  @Create('Salt')
   @Invokable()
-  public async createCustomer(
-    @Param(Customer)
-    customer: Customer
-  ) {
-    await customer.save();
+  public async createSalt(
+    @Param(Salt)
+    salt: Salt
+  ){
+      await salt.save();
   }
+  /*
+  // Get Participants
+  */
 
   @GetAll('Supplier')
   @Invokable()
@@ -119,52 +136,19 @@ export class SupplychainController extends ConvectorController {
     return distributor;
   }
 
-  @GetAll('Retailer')
+  @GetAll('Pharmacist')
   @Invokable()
-  public async getAllRetailers()
+  public async getAllPharmacists()
   {
-    const storedRetailers = await Retailer.getAll<Retailer>();
-    return storedRetailers;
-  }
-
-  @GetById('Retailer')
-  @Invokable()
-  public async getRetailerById(
-    @Param(yup.string())
-    retailerId: string
-  )
-  {
-    const retailer = await Retailer.getOne(retailerId);
-    return retailer;
-  }
-
-  @GetAll('Customer')
-  @Invokable()
-  public async getAllCustomers()
-  {
-    const storedCustomers = await Customer.getAll<Customer>();
-    return storedCustomers;
-  }
-
-  @GetById('Customer')
-  @Invokable()
-  public async getCustomerById(
-    @Param(yup.string())
-    customerId: string
-  )
-  {
-    const customer = await Customer.getOne(customerId);
-    return customer;
+    const storedPharmacists = await Pharmacist.getAll<Pharmacist>();
+    return storedPharmacists;
   }
 
   @Invokable()
   public async getAllModels()
   {
-    const storedCustomers = await Customer.getAll<Customer>();
-    console.log(storedCustomers);
-
-    const storedRetailers = await Retailer.getAll<Retailer>();
-    console.log(storedRetailers);
+    const storedPharmacists = await Pharmacist.getAll<Pharmacist>();
+    console.log(storedPharmacists);
 
     const storedDistributors = await Distributor.getAll<Distributor>();
     console.log(storedDistributors);
@@ -176,16 +160,39 @@ export class SupplychainController extends ConvectorController {
     console.log(storedSuppliers);
   }
 
+  /*
+  // Transactions
+  */
+
   @Service()
   @Invokable()
-  public async fetchRawMaterial(
+  public async fetchSalts(
     @Param(yup.string())
     supplierId: string,
-    @Param(yup.number())
-    rawMaterialSupply: number
+    @Param(yup.mixed())
+    rawMaterialSupply: Map<string,number>
   ) {
+
+    // Get Supplier
     const supplier = await Supplier.getOne(supplierId);
-    supplier.rawMaterialAvailable = supplier.rawMaterialAvailable + rawMaterialSupply;
+    let rawMaterialSupplyMap =  new Map<Salt,number>();
+    if(supplier.id != null)
+    {
+      rawMaterialSupply.forEach(async (amount: number, salt_id: string)=>{
+          const salt = await Salt.getOne(salt_id);
+          if(salt.id){
+              rawMaterialSupplyMap.set(salt,amount + rawMaterialSupplyMap.get(salt));
+          }
+          else{
+            throw new Error("Salt with id: " + salt_id + " doesn't  exist!");
+          }
+      });
+      supplier.rawMaterialAvailable = rawMaterialSupplyMap;
+    }
+    else
+      throw new Error("Supplier with id: " + supplierId + " doesn't  exist!");
+
+    console.log("Raw Materials Fetched Successfully!");
     await supplier.save();
   }
 
@@ -196,109 +203,107 @@ export class SupplychainController extends ConvectorController {
     manufacturerId: string,
     @Param(yup.string())
     supplierId: string,
-    @Param(yup.number())
-    rawMaterialSupply: number
+    @Param(yup.mixed())
+    rawMaterialSupply: Map<string,number>
   ) {
     const supplier = await Supplier.getOne(supplierId);
-    supplier.rawMaterialAvailable = supplier.rawMaterialAvailable - rawMaterialSupply;
     const manufacturer = await Manufacturer.getOne(manufacturerId);
-    manufacturer.rawMaterialAvailable = rawMaterialSupply + manufacturer.rawMaterialAvailable;
 
     await supplier.save();
     await manufacturer.save();
   }
 
-  @Service()
-  @Invokable()
-  public async createProducts(
-    @Param(yup.string())
-    manufacturerId: string,
-    @Param(yup.number())
-    rawMaterialConsumed: number,
-    @Param(yup.number())
-    productsCreated: number
-  ) {
-    const manufacturer = await Manufacturer.getOne(manufacturerId);
-    manufacturer.rawMaterialAvailable = manufacturer.rawMaterialAvailable - rawMaterialConsumed;
-    manufacturer.productsAvailable = manufacturer.productsAvailable + productsCreated;
-    await manufacturer.save();
-  }
+  // @Service()
+  // @Invokable()
+  // public async createProducts(
+  //   @Param(yup.string())
+  //   manufacturerId: string,
+  //   @Param(yup.number())
+  //   rawMaterialConsumed: number,
+  //   @Param(yup.number())
+  //   productsCreated: number
+  // ) {
+  //   const manufacturer = await Manufacturer.getOne(manufacturerId);
+  //   manufacturer.rawMaterialAvailable = manufacturer.rawMaterialAvailable - rawMaterialConsumed;
+  //   manufacturer.productsAvailable = manufacturer.productsAvailable + productsCreated;
+  //   await manufacturer.save();
+  // }
 
-  @Service()
-  @Invokable()
-  public async sendProductsToDistribution(
-    @Param(yup.string())
-    manufacturerId: string,
-    @Param(yup.string())
-    distributorId: string,
-    @Param(yup.number())
-    sentProducts: number
-  ) {
-    const distributor = await Distributor.getOne(distributorId);
-    distributor.productsToBeShipped = distributor.productsToBeShipped + sentProducts;
-    const manufacturer = await Manufacturer.getOne(manufacturerId);
-    manufacturer.productsAvailable = manufacturer.productsAvailable - sentProducts;
+  // @Service()
+  // @Invokable()
+  // public async sendProductsToDistribution(
+  //   @Param(yup.string())
+  //   manufacturerId: string,
+  //   @Param(yup.string())
+  //   distributorId: string,
+  //   @Param(yup.number())
+  //   sentProducts: number
+  // ) {
+  //   const distributor = await Distributor.getOne(distributorId);
+  //   distributor.productsToBeShipped = distributor.productsToBeShipped + sentProducts;
+  //   const manufacturer = await Manufacturer.getOne(manufacturerId);
+  //   manufacturer.productsAvailable = manufacturer.productsAvailable - sentProducts;
 
-    await distributor.save();
-    await manufacturer.save();
-  }
+  //   await distributor.save();
+  //   await manufacturer.save();
+  // }
 
-  @Service()
-  @Invokable()
-  public async orderProductsFromDistributor(
-    @Param(yup.string())
-    retailerId: string,
-    @Param(yup.string())
-    distributorId: string,
-    @Param(yup.number())
-    orderedProducts: number
-  ) {
-    const retailer = await Retailer.getOne(retailerId);
-    retailer.productsOrdered = retailer.productsOrdered + orderedProducts;
-    const distributor = await Distributor.getOne(distributorId);
-    distributor.productsToBeShipped = distributor.productsToBeShipped - orderedProducts;
-    distributor.productsShipped = distributor.productsShipped + orderedProducts;
+  // @Service()
+  // @Invokable()
+  // public async orderProductsFromDistributor(
+  //   @Param(yup.string())
+  //   PharmacistId: string,
+  //   @Param(yup.string())
+  //   distributorId: string,
+  //   @Param(yup.number())
+  //   orderedProducts: number
+  // ) {
+  //   const Pharmacist = await Pharmacist.getOne(PharmacistId);
+  //   Pharmacist.productsOrdered = Pharmacist.productsOrdered + orderedProducts;
+  //   const distributor = await Distributor.getOne(distributorId);
+  //   distributor.productsToBeShipped = distributor.productsToBeShipped - orderedProducts;
+  //   distributor.productsShipped = distributor.productsShipped + orderedProducts;
 
-    await retailer.save();
-    await distributor.save();
-  }
+  //   await Pharmacist.save();
+  //   await distributor.save();
+  // }
 
-  @Service()
-  @Invokable()
-  public async receiveProductsFromDistributor(
-    @Param(yup.string())
-    retailerId: string,
-    @Param(yup.string())
-    distributorId: string,
-    @Param(yup.number())
-    receivedProducts: number
-  ) {
-    const retailer = await Retailer.getOne(retailerId);
-    retailer.productsAvailable = retailer.productsAvailable + receivedProducts;
-    const distributor = await Distributor.getOne(distributorId);
-    distributor.productsReceived = distributor.productsReceived + receivedProducts;
+  // @Service()
+  // @Invokable()
+  // public async receiveProductsFromDistributor(
+  //   @Param(yup.string())
+  //   PharmacistId: string,
+  //   @Param(yup.string())
+  //   distributorId: string,
+  //   @Param(yup.number())
+  //   receivedProducts: number
+  // ) {
+  //   const Pharmacist = await Pharmacist.getOne(PharmacistId);
+  //   Pharmacist.productsAvailable = Pharmacist.productsAvailable + receivedProducts;
+  //   const distributor = await Distributor.getOne(distributorId);
+  //   distributor.productsReceived = distributor.productsReceived + receivedProducts;
 
-    await retailer.save();
-    await distributor.save();
-  }
+  //   await Pharmacist.save();
+  //   await distributor.save();
+  // }
 
-  @Service()
-  @Invokable()
-  public async buyProductsFromRetailer(
-    @Param(yup.string())
-    retailerId: string,
-    @Param(yup.string())
-    customerId: string,
-    @Param(yup.number())
-    boughtProducts: number
-  ) {
-    const retailer = await Retailer.getOne(retailerId);
-    retailer.productsAvailable = retailer.productsAvailable - boughtProducts;
-    retailer.productsSold = retailer.productsSold + boughtProducts;
-    const customer = await Customer.getOne(customerId);
-    customer.productsBought = customer.productsBought + boughtProducts;
+  // @Service()
+  // @Invokable()
+  // public async buyProductsFromPharmacist(
+  //   @Param(yup.string())
+  //   PharmacistId: string,
+  //   @Param(yup.string())
+  //   customerId: string,
+  //   @Param(yup.number())
+  //   boughtProducts: number
+  // ) {
+  //   const Pharmacist = await Pharmacist.getOne(PharmacistId);
+  //   Pharmacist.productsAvailable = Pharmacist.productsAvailable - boughtProducts;
+  //   Pharmacist.productsSold = Pharmacist.productsSold + boughtProducts;
+  //   const customer = await Customer.getOne(customerId);
+  //   customer.productsBought = customer.productsBought + boughtProducts;
 
-    await retailer.save();
-    await customer.save();
-  }
+  //   await Pharmacist.save();
+  //   await customer.save();
+  // }
 }

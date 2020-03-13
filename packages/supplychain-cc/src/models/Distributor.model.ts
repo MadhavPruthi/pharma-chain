@@ -10,21 +10,28 @@ import {
 export class Distributor extends ConvectorModel<Distributor> {
   @ReadOnly()
   @Required()
-  public readonly type:string = 'io.worldsibu.Distributor';
+  public readonly type:string = 'io.pharmachain.Distributor';
+
+  @Validate(yup.string())
+  public x509Identity: string;
 
   @Required()
   @Validate(yup.string())
-  public name: string;
+  public organizationName: string;
+
+  @Required()
+  @Validate(yup.string())
+  public address: string;
 
   @Required()
   @Validate(yup.number())
-  public productsToBeShipped: number;
+  public batchToBeShipped: number = 0;
 
   @Required()
   @Validate(yup.number())
-  public productsShipped: number;
+  public batchShipped: number = 0;
 
   @Required()
   @Validate(yup.number())
-  public productsReceived: number;
+  public batchReceived: number = 0;
 }

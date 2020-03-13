@@ -4,20 +4,31 @@ import {
   Default,
   ReadOnly,
   Required,
-  Validate
+  Validate,
+  FlatConvectorModel
 } from '@worldsibu/convector-core-model';
+import { Salt } from './salt.model';
 
 export class Supplier extends ConvectorModel<Supplier> {
   @ReadOnly()
   @Required()
-  public readonly type:string = 'io.worldsibu.Supplier';
+  public readonly type:string = 'io.pharmachain.Supplier';
+
+  @Validate(yup.string())
+  public x509Identity: string;
 
   @Required()
   @Validate(yup.string())
-  public name: string;
+  public address: string;
 
   @Required()
-  @Validate(yup.number())
-  public rawMaterialAvailable: number;
+  @Validate(yup.string())
+  public organizationName: string;
+
+  @Required()
+  public authorityNumber: string;
+  
+  @Required()
+  public rawMaterialAvailable: Map<FlatConvectorModel<Salt>,number>;
 
 }

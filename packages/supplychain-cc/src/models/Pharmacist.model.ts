@@ -4,16 +4,13 @@ import {
   Default,
   ReadOnly,
   Required,
-  Validate,
-  FlatConvectorModel
+  Validate
 } from '@worldsibu/convector-core-model';
 
-import {Salt} from './salt.model';
-
-export class Manufacturer extends ConvectorModel<Manufacturer> {
+export class Pharmacist extends ConvectorModel<Pharmacist> {
   @ReadOnly()
   @Required()
-  public readonly type:string = 'io.pharmachain.Manufacturer';
+  public readonly type:string = 'io.pharmachain.Pharmacist';
 
   public x509Identity: string;
 
@@ -30,13 +27,14 @@ export class Manufacturer extends ConvectorModel<Manufacturer> {
   public authorityNumber: string;
 
   @Required()
-  @Validate(yup.string())
-  public FDALicenseNumber: string;
-  
+  @Validate(yup.number())
+  public drugsOrdered: number = 0;
 
-  public rawMaterialAvailable: Array<FlatConvectorModel<Salt>>;
+  @Required()
+  @Validate(yup.number())
+  public drugsAvailable: number = 0;
 
-  public batchManufacturedCount: number = 0;
-
-
+  @Required()
+  @Validate(yup.number())
+  public drugsSold: number = 0;
 }
