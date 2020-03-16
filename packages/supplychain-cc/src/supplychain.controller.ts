@@ -16,6 +16,10 @@ import { DrugBatch } from './models/drugBatch.model';
 import { Drug } from './models/drug.model';
 import { Salt } from './models/salt.model';
 
+import {
+  FlatConvectorModel
+} from '@worldsibu/convector-core-model';
+
 @Controller('supplychain')
 export class SupplychainController extends ConvectorController {
 
@@ -30,6 +34,7 @@ export class SupplychainController extends ConvectorController {
     supplier: Supplier
   ) {
     supplier.x509Identity = this.sender;
+    console.log("Executed!!");
     await supplier.save();
   }
 
@@ -143,7 +148,16 @@ export class SupplychainController extends ConvectorController {
     const storedPharmacists = await Pharmacist.getAll<Pharmacist>();
     return storedPharmacists;
   }
-
+  @GetById('Pharmacist')
+  @Invokable()
+  public async getPharmacistById(
+    @Param(yup.string())
+    pharmacistId: string
+  )
+  {
+    const pharmacist = await Pharmacist.getOne(pharmacistId);
+    return pharmacist;
+  }
   @Invokable()
   public async getAllModels()
   {
@@ -169,31 +183,36 @@ export class SupplychainController extends ConvectorController {
   public async fetchSalts(
     @Param(yup.string())
     supplierId: string,
-    @Param(yup.mixed())
+    @Param(yup.object())
     rawMaterialSupply: Map<string,number>
   ) {
 
     // Get Supplier
     const supplier = await Supplier.getOne(supplierId);
-    let rawMaterialSupplyMap =  new Map<Salt,number>();
-    if(supplier.id != null)
+
+    if(supplier.id && supplier)
     {
-      rawMaterialSupply.forEach(async (amount: number, salt_id: string)=>{
-          const salt = await Salt.getOne(salt_id);
-          if(salt.id){
-              rawMaterialSupplyMap.set(salt,amount + rawMaterialSupplyMap.get(salt));
-          }
-          else{
-            throw new Error("Salt with id: " + salt_id + " doesn't  exist!");
-          }
-      });
-      supplier.rawMaterialAvailable = rawMaterialSupplyMap;
+    
+      for(let salt_id of rawMaterialSupply.keys())
+      {
+        const amount = rawMaterialSupply[salt_id];
+
+        const salt = await Salt.getOne(salt_id);
+
+        if(salt.id && salt){
+          supplier.rawMaterialAvailable.set(salt_id,amount);
+          salt.owner = supplier.x509Identity;
+        }
+        else{
+          throw new Error("Salt with id: " + salt_id + " doesn't  exist!");
+        }
+      }
     }
     else
       throw new Error("Supplier with id: " + supplierId + " doesn't  exist!");
 
-    console.log("Raw Materials Fetched Successfully!");
     await supplier.save();
+    return supplier.toJSON();
   }
 
   @Service()

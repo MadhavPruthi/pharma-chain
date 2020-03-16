@@ -11,6 +11,7 @@
             "es2015"
         ],
         "outDir": "./dist",
-        "rootDir": "./src"
+        "rootDir": "./src",
+        "downlevelIteration": true
     }
 }

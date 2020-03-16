@@ -26,9 +26,10 @@ export class Supplier extends ConvectorModel<Supplier> {
   public organizationName: string;
 
   @Required()
+  @Validate(yup.string())
   public authorityNumber: string;
   
   @Required()
-  public rawMaterialAvailable: Map<FlatConvectorModel<Salt>,number>;
+  public rawMaterialAvailable: Map<string,number> = new Map<string,number>();
 
 }

@@ -15,16 +15,15 @@
 		"verb":"post"
     },
     {
-		"function":"createRetailer",
+		"function":"createPharmacist",
 		"controller":"SupplychainController",
 		"verb":"post"
     },
     {
-		"function":"createCustomer",
-		"controller":"SupplychainController",
-		"verb":"post"
+        "function":"createSalt",
+        "controller":"SupplychainController",
+        "verb":"post"
     },
-
     {
         "function":"getAllSuppliers",
         "controller":"SupplychainController",
@@ -56,23 +55,12 @@
         "verb":"get"
     },
     {
-        "function":"getAllRetailers",
+        "function":"getAllPharmacists",
         "controller":"SupplychainController",
         "verb":"get"
     },
     {
-        "function":"getRetailerById",
-        "controller":"SupplychainController",
-        "verb":"get"
-    },
-    {
-        "function":"getCustomerById",
-        "controller":"SupplychainController",
-        "verb":"get"
-    },
- 	
-    {
-        "function":"getAllCustomers",
+        "function":"getPharmacistById",
         "controller":"SupplychainController",
         "verb":"get"
     },
@@ -82,37 +70,7 @@
         "verb":"get"
     },
     {
-        "function":"fetchRawMaterial",
-        "controller":"SupplychainController",
-        "verb":"post"
-    },
-   {
-        "function":"getRawMaterialFromSupplier",
-        "controller":"SupplychainController",
-        "verb":"post"
-    },
-   {
-        "function":"createProducts",+
-        "controller":"SupplychainController",
-        "verb":"post"
-    },
-   {
-        "function":"sendProductsToDistribution",
-        "controller":"SupplychainController",
-        "verb":"post"
-    },
-    {
-        "function":"orderProductsFromDistributor",
-        "controller":"SupplychainController",
-        "verb":"post"
-    },
-    { 
-        "function":"receiveProductsFromDistributor",
-        "controller":"SupplychainController",
-        "verb":"post"
-    },
-    { 
-        "function":"buyProductsFromRetailer",
+        "function":"fetchSalts",
         "controller":"SupplychainController",
         "verb":"post"
     }
