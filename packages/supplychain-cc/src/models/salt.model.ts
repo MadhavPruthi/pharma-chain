@@ -17,8 +17,4 @@ export class Salt extends ConvectorModel<Salt> {
     @Validate(yup.string())
     public name: string;
 
-    @Required()
-    @Validate(yup.string())
-    public owner:string;
-
 }

@@ -16,9 +16,7 @@ import { DrugBatch } from './models/drugBatch.model';
 import { Drug } from './models/drug.model';
 import { Salt } from './models/salt.model';
 
-import {
-  FlatConvectorModel
-} from '@worldsibu/convector-core-model';
+import { SaltBatch } from './models/saltBatch.model';
 
 @Controller('supplychain')
 export class SupplychainController extends ConvectorController {
@@ -79,6 +77,15 @@ export class SupplychainController extends ConvectorController {
     salt: Salt
   ){
       await salt.save();
+  }
+
+  @Create('SaltBatch')
+  @Invokable()
+  public async createSaltBatch(
+    @Param(SaltBatch)
+    saltBatch: SaltBatch
+  ){
+      await saltBatch.save();
   }
   /*
   // Get Participants
@@ -192,27 +199,42 @@ export class SupplychainController extends ConvectorController {
 
     if(supplier.id && supplier)
     {
-    
-      for(let salt_id of rawMaterialSupply.keys())
+
+      for(let salt_id of Object.keys(rawMaterialSupply))
       {
-        const amount = rawMaterialSupply[salt_id];
+        let amount = rawMaterialSupply[salt_id];
 
         const salt = await Salt.getOne(salt_id);
 
         if(salt.id && salt){
-          supplier.rawMaterialAvailable.set(salt_id,amount);
-          salt.owner = supplier.x509Identity;
+          let saltBatch = new SaltBatch();
+          saltBatch.id = Math.random().toString(36).substring(7);
+          saltBatch.salt = salt;
+          saltBatch.amount = amount;
+
+          let i:number;
+          // for(i=0; i < supplier.rawMaterialAvailable.length; i++)
+          // {
+          //     if(supplier.rawMaterialAvailable[i].id == salt_id)
+          //     {
+          //       saltBatch.amount += supplier.rawMaterialAvailable[i].amount;
+          //     }
+          // }
+          await saltBatch.save();
+          supplier.rawMaterialAvailable.push(saltBatch);
         }
         else{
           throw new Error("Salt with id: " + salt_id + " doesn't  exist!");
         }
       }
+
     }
     else
       throw new Error("Supplier with id: " + supplierId + " doesn't  exist!");
 
+
     await supplier.save();
-    return supplier.toJSON();
+    return supplier.rawMaterialAvailable;
   }
 
   @Service()

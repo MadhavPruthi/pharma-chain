@@ -7,7 +7,7 @@ import {
   Validate,
   FlatConvectorModel
 } from '@worldsibu/convector-core-model';
-import { Salt } from './salt.model';
+import { SaltBatch } from './saltBatch.model';
 
 export class Supplier extends ConvectorModel<Supplier> {
   @ReadOnly()
@@ -29,7 +29,7 @@ export class Supplier extends ConvectorModel<Supplier> {
   @Validate(yup.string())
   public authorityNumber: string;
   
-  @Required()
-  public rawMaterialAvailable: Map<string,number> = new Map<string,number>();
+  @Validate(yup.array(SaltBatch.schema()))
+  public rawMaterialAvailable: Array<FlatConvectorModel<SaltBatch>>;
 
 }

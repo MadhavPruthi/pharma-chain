@@ -5,6 +5,7 @@ import {
     SupplychainController_createDistributor_post,
     SupplychainController_createPharmacist_post,
     SupplychainController_createSalt_post,
+    SupplychainController_createSaltBatch_post,
     SupplychainController_getAllSuppliers_get,
     SupplychainController_getSupplierById_get,
     SupplychainController_getAllManufacturers_get,
@@ -21,6 +22,7 @@ export default express.Router()
 .post('/supplychain/createDistributor', SupplychainController_createDistributor_post)
 .post('/supplychain/createPharmacist', SupplychainController_createPharmacist_post)
 .post('/supplychain/createSalt', SupplychainController_createSalt_post)
+.post('/supplychain/createSaltBatch', SupplychainController_createSaltBatch_post)
 .get('/supplychain/getAllSuppliers', SupplychainController_getAllSuppliers_get)
 .get('/supplychain/getSupplierById/:supplierId', SupplychainController_getSupplierById_get)
 .get('/supplychain/getAllManufacturers', SupplychainController_getAllManufacturers_get)

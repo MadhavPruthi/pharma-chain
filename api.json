@@ -25,6 +25,11 @@
         "verb":"post"
     },
     {
+        "function":"createSaltBatch",
+        "controller":"SupplychainController",
+        "verb":"post"
+    },
+    {
         "function":"getAllSuppliers",
         "controller":"SupplychainController",
         "verb":"get"

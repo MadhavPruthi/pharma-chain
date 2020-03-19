@@ -57,6 +57,17 @@ export async function SupplychainController_createSalt_post(req: Request, res: R
         res.status(500).send(ex);
     }
 }
+export async function SupplychainController_createSaltBatch_post(req: Request, res: Response): Promise<void>{
+    try{
+        let params = req.body;
+            res.status(200).send(await SupplychainControllerBackEnd
+                .createSaltBatch(params.saltBatch));
+            
+    } catch(ex) {
+        console.log('Error post SupplychainController_createSaltBatch', ex.stack);
+        res.status(500).send(ex);
+    }
+}
 export async function SupplychainController_getAllSuppliers_get(req: Request, res: Response): Promise<void>{
     try{
         let params = req.params;
