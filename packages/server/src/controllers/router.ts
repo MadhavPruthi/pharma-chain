@@ -15,7 +15,9 @@ import {
     SupplychainController_getAllPharmacists_get,
     SupplychainController_getPharmacistById_get,
     SupplychainController_getAllModels_get,
-    SupplychainController_fetchSalts_post } from './controllers'
+    SupplychainController_fetchSalts_post,
+    SupplychainController_getRawMaterialFromSupplier_post,
+    SupplychainController_manufactureDrugs_post } from './controllers'
 export default express.Router()
 .post('/supplychain/createSupplier', SupplychainController_createSupplier_post)
 .post('/supplychain/createManufacturer', SupplychainController_createManufacturer_post)
@@ -33,3 +35,5 @@ export default express.Router()
 .get('/supplychain/getPharmacistById/:pharmacistId', SupplychainController_getPharmacistById_get)
 .get('/supplychain/getAllModels', SupplychainController_getAllModels_get)
 .post('/supplychain/fetchSalts', SupplychainController_fetchSalts_post)
+.post('/supplychain/getRawMaterialFromSupplier', SupplychainController_getRawMaterialFromSupplier_post)
+.post('/supplychain/manufactureDrugs', SupplychainController_manufactureDrugs_post)

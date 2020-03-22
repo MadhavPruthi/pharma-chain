@@ -1,83 +1,92 @@
 [
-    {
-        "function":"createSupplier",
-        "controller":"SupplychainController",
-        "verb":"post"
-    },
-    {
-		"function":"createManufacturer",
-		"controller":"SupplychainController",
-		"verb":"post"
-    },
-    {
-		"function":"createDistributor",
-		"controller":"SupplychainController",
-		"verb":"post"
-    },
-    {
-		"function":"createPharmacist",
-		"controller":"SupplychainController",
-		"verb":"post"
-    },
-    {
-        "function":"createSalt",
-        "controller":"SupplychainController",
-        "verb":"post"
-    },
-    {
-        "function":"createSaltBatch",
-        "controller":"SupplychainController",
-        "verb":"post"
-    },
-    {
-        "function":"getAllSuppliers",
-        "controller":"SupplychainController",
-        "verb":"get"
-    },
-    {
-        "function":"getSupplierById",
-        "controller":"SupplychainController",
-        "verb":"get"
-    },
-    {
-        "function":"getAllManufacturers",
-        "controller":"SupplychainController",
-        "verb":"get"
-    },
-    {
-        "function":"getManufacturerById",
-        "controller":"SupplychainController",
-        "verb":"get"
-    },
-    {
-        "function":"getAllDistributors",
-        "controller":"SupplychainController",
-        "verb":"get"
-    },
-    {
-        "function":"getDistributorById",
-        "controller":"SupplychainController",
-        "verb":"get"
-    },
-    {
-        "function":"getAllPharmacists",
-        "controller":"SupplychainController",
-        "verb":"get"
-    },
-    {
-        "function":"getPharmacistById",
-        "controller":"SupplychainController",
-        "verb":"get"
-    },
-    {
-        "function":"getAllModels",
-        "controller":"SupplychainController",
-        "verb":"get"
-    },
-    {
-        "function":"fetchSalts",
-        "controller":"SupplychainController",
-        "verb":"post"
-    }
+  {
+    "function": "createSupplier",
+    "controller": "SupplychainController",
+    "verb": "post"
+  },
+  {
+    "function": "createManufacturer",
+    "controller": "SupplychainController",
+    "verb": "post"
+  },
+  {
+    "function": "createDistributor",
+    "controller": "SupplychainController",
+    "verb": "post"
+  },
+  {
+    "function": "createPharmacist",
+    "controller": "SupplychainController",
+    "verb": "post"
+  },
+  {
+    "function": "createSalt",
+    "controller": "SupplychainController",
+    "verb": "post"
+  },
+  {
+    "function": "createSaltBatch",
+    "controller": "SupplychainController",
+    "verb": "post"
+  },
+  {
+    "function": "getAllSuppliers",
+    "controller": "SupplychainController",
+    "verb": "get"
+  },
+  {
+    "function": "getSupplierById",
+    "controller": "SupplychainController",
+    "verb": "get"
+  },
+  {
+    "function": "getAllManufacturers",
+    "controller": "SupplychainController",
+    "verb": "get"
+  },
+  {
+    "function": "getManufacturerById",
+    "controller": "SupplychainController",
+    "verb": "get"
+  },
+  {
+    "function": "getAllDistributors",
+    "controller": "SupplychainController",
+    "verb": "get"
+  },
+  {
+    "function": "getDistributorById",
+    "controller": "SupplychainController",
+    "verb": "get"
+  },
+  {
+    "function": "getAllPharmacists",
+    "controller": "SupplychainController",
+    "verb": "get"
+  },
+  {
+    "function": "getPharmacistById",
+    "controller": "SupplychainController",
+    "verb": "get"
+  },
+  {
+    "function": "getAllModels",
+    "controller": "SupplychainController",
+    "verb": "get"
+  },
+  {
+    "function": "fetchSalts",
+    "controller": "SupplychainController",
+    "verb": "post"
+  },
+  {
+    "function": "getRawMaterialFromSupplier",
+    "controller": "SupplychainController",
+    "verb": "post"
+  },
+  {
+    "function": "manufactureDrugs",
+    "verb": "post",
+    "controller": "SupplychainController"
+  }
 ]
-

@@ -1,92 +1,87 @@
-import * as yup from 'yup';
+import * as yup from "yup";
 import {
-    ConvectorModel,
-    Default,
-    ReadOnly,
-    Required,
-    Validate,
-    FlatConvectorModel
-} from '@worldsibu/convector-core-model';
+  ConvectorModel,
+  Default,
+  ReadOnly,
+  Required,
+  Validate,
+  FlatConvectorModel
+} from "@worldsibu/convector-core-model";
 
-import {Salt} from './salt.model'
-import { Supplier } from './Supplier.model';
-import { Manufacturer } from './Manufacturer.model';
-import { Distributor } from './Distributor.model';
-import { Pharmacist } from './Pharmacist.model';
+import { Salt } from "./salt.model";
+import { Supplier } from "./Supplier.model";
+import { Manufacturer } from "./Manufacturer.model";
+import { Distributor } from "./Distributor.model";
+import { Pharmacist } from "./Pharmacist.model";
+import { SaltBatch } from "./saltBatch.model";
 
-enum State {
-    SALTS_SHIPPED,
-    SALTS_RECEIVED,
-    DRUG_BATCH_MANUFACTURED,
-    SENT_TO_DISTRIBUTORS,
-    READY_FOR_DISTRIBUTION,
-    IMPORTED,
-    READY_FOR_SALE
-  };
-
+export enum State {
+  DRUG_BATCH_MANUFACTURED,
+  SENT_TO_DISTRIBUTORS,
+  READY_FOR_DISTRIBUTION,
+  IMPORTED,
+  READY_FOR_SALE
+}
 
 export class DrugBatch extends ConvectorModel<DrugBatch> {
+  @ReadOnly()
+  @Required()
+  public readonly type = "io.pharmachain.drugBatch";
 
-    @ReadOnly()
-    @Required()
-    public readonly type = 'io.pharmachain.drugBatch';
+  @Required()
+  @Validate(yup.string())
+  public name: string;
 
+  @Required()
+  public state: State;
 
-    @Required()
-    @Validate(yup.string())
-    public name: string;
+  @Required()
+  @Validate(yup.number())
+  public amount: number;
 
-    @Required()
-    public state: State;
+  @Default([])
+  @Validate(yup.array(SaltBatch.schema()))
+  public salts: Array<FlatConvectorModel<SaltBatch>>;
 
-    @Required()
-    @Validate(yup.number())
-    public amount: number;
+  @Required()
+  @Validate(yup.string())
+  public genericName: string;
 
-    @Default([])
-    public salts: Array<FlatConvectorModel<Salt>>
+  @Required()
+  @Validate(yup.string())
+  public owner: string;
 
-    @Required()
-    @Validate(yup.string())
-    public genericName:string;
+  @Required()
+  @Validate(yup.string())
+  public expiryDate: string;
 
-    @Required()
-    @Validate(yup.string())
-    public owner: string;
+  @Required()
+  @Validate(yup.string())
+  public manufacturingDate: string;
 
-    @Required()
-    @Validate(yup.date())
-    public expiryDate:Date;
+  @Validate(yup.string())
+  public dateShippedFromManufacturer: string;
 
-    @Required()
-    @Validate(yup.date())
-    public manufacturingDate:Date;
+  @Validate(yup.string())
+  public dateReceivedByDistributor: string;
 
-    @Validate(yup.date())
-    public dateShippedFromManufacturer:Date;
+  @Validate(yup.string())
+  public dateShippedFromDistributor: string;
 
-    @Required()
-    @Validate(yup.date())
-    public saltsReceived: Date;
+  @Validate(yup.string())
+  public dateReceivedByPharmacist: string;
 
-    @Validate(yup.date())
-    public dateReceivedByDistributor:Date;
+  @Required()
+  @ReadOnly()
+  public supplier: FlatConvectorModel<Supplier>;
 
-    @Validate(yup.date())
-    public dateShippedFromDistributor: Date;
+  @Required()
+  @ReadOnly()
+  public manufacturer: FlatConvectorModel<Manufacturer>;
 
-    @Validate(yup.date())
-    public dateReceivedByPharmacist:Date;
+  //   @Default(undefined)
+  public distributor: FlatConvectorModel<Distributor>;
 
-    @Required()
-    @ReadOnly()
-    public supplier: FlatConvectorModel<Supplier>;
-
-    @Required()
-    @ReadOnly()
-    public manufacturer: FlatConvectorModel<Manufacturer>;
-
-    public distributor: FlatConvectorModel<Distributor>;
-
-    public pharmacist: FlatConvectorModel<Pharmacist>;
+  //   @Default(undefined)
+  public pharmacist: FlatConvectorModel<Pharmacist>;
 }

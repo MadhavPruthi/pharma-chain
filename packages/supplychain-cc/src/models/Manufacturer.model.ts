@@ -1,4 +1,4 @@
-import * as yup from 'yup';
+import * as yup from "yup";
 import {
   ConvectorModel,
   Default,
@@ -6,14 +6,15 @@ import {
   Required,
   Validate,
   FlatConvectorModel
-} from '@worldsibu/convector-core-model';
+} from "@worldsibu/convector-core-model";
 
-import {Salt} from './salt.model';
+import { Salt } from "./salt.model";
+import { SaltBatch } from "./saltBatch.model";
 
 export class Manufacturer extends ConvectorModel<Manufacturer> {
   @ReadOnly()
   @Required()
-  public readonly type:string = 'io.pharmachain.Manufacturer';
+  public readonly type: string = "io.pharmachain.Manufacturer";
 
   public x509Identity: string;
 
@@ -32,11 +33,10 @@ export class Manufacturer extends ConvectorModel<Manufacturer> {
   @Required()
   @Validate(yup.string())
   public FDALicenseNumber: string;
-  
 
-  public rawMaterialAvailable: Array<FlatConvectorModel<Salt>>;
+  @Validate(yup.array(SaltBatch.schema()))
+  @Default([])
+  public rawMaterialAvailable: Array<FlatConvectorModel<SaltBatch>>;
 
   public batchManufacturedCount: number = 0;
-
-
 }

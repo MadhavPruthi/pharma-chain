@@ -178,3 +178,25 @@ export async function SupplychainController_fetchSalts_post(req: Request, res: R
         res.status(500).send(ex);
     }
 }
+export async function SupplychainController_getRawMaterialFromSupplier_post(req: Request, res: Response): Promise<void>{
+    try{
+        let params = req.body;
+            res.status(200).send(await SupplychainControllerBackEnd
+                .getRawMaterialFromSupplier(params.manufacturerId,params.supplierId,params.rawMaterialSupply));
+            
+    } catch(ex) {
+        console.log('Error post SupplychainController_getRawMaterialFromSupplier', ex.stack);
+        res.status(500).send(ex);
+    }
+}
+export async function SupplychainController_manufactureDrugs_post(req: Request, res: Response): Promise<void>{
+    try{
+        let params = req.body;
+            res.status(200).send(await SupplychainControllerBackEnd
+                .manufactureDrugs(params.manufacturerId,params.rawMaterialConsumed,params.drugName,params.genericName,params.productsCreated,params.expiryDate));
+            
+    } catch(ex) {
+        console.log('Error post SupplychainController_manufactureDrugs', ex.stack);
+        res.status(500).send(ex);
+    }
+}
