@@ -341,24 +341,92 @@ export class SupplychainController extends ConvectorController {
     await manufacturer.save();
   }
 
-  // @Service()
-  // @Invokable()
-  // public async sendProductsToDistribution(
-  //   @Param(yup.string())
-  //   manufacturerId: string,
-  //   @Param(yup.string())
-  //   distributorId: string,
-  //   @Param(yup.number())
-  //   sentProducts: number
-  // ) {
-  //   const distributor = await Distributor.getOne(distributorId);
-  //   distributor.productsToBeShipped = distributor.productsToBeShipped + sentProducts;
-  //   const manufacturer = await Manufacturer.getOne(manufacturerId);
-  //   manufacturer.productsAvailable = manufacturer.productsAvailable - sentProducts;
+  @Service()
+  @Invokable()
+  public async shipProductsFromManufacturerToDistributor(
+    @Param(yup.string())
+    manufacturerId: string,
+    @Param(yup.string())
+    distributorId: string,
+    @Param(yup.string())
+    drugName: string,
+    @Param(yup.string())
+    shippingID: string
+  ) {
+    const distributor = await Distributor.getOne(distributorId);
+    const manufacturer = await Manufacturer.getOne(manufacturerId);
 
-  //   await distributor.save();
-  //   await manufacturer.save();
-  // }
+    if (distributor.id == null || manufacturer.id == null) {
+      throw new Error("Participants doesn't exist");
+    }
+
+    const drugBatchArray = await DrugBatch.query(DrugBatch, {
+      selector: {
+        name: drugName,
+        manufacturer: {
+          id: manufacturerId
+        },
+        state: State.DRUG_BATCH_MANUFACTURED
+      }
+    });
+
+    if (drugBatchArray[0] == undefined) {
+      return {
+        message: "No drug batch is available yet!"
+      };
+    }
+
+    const drugBatch: DrugBatch = drugBatchArray[0];
+    await drugBatch.update({
+      state: State.DRUG_BATCH_SHIPPED,
+      shippingId: shippingID,
+      distributor: distributor,
+      dateShippedFromManufacturer:this.tx.stub.getDate().toString()
+    });
+
+    await distributor.save();
+    await manufacturer.save();
+
+    return drugBatchArray;
+  }
+
+  @Service()
+  @Invokable()
+  public async receiveProductsFromManufacturerByDistributor(
+    @Param(yup.string())
+    distributorId: string,
+    @Param(yup.string())
+    shippingID: string
+  ) {
+    const distributor = await Distributor.getOne(distributorId);
+
+    if (distributor.id == null) {
+      throw new Error("Participants doesn't exist");
+    }
+
+    const drugBatchArray = await DrugBatch.query(DrugBatch, {
+      selector: {
+        shippingID: shippingID,
+        state: State.DRUG_BATCH_MANUFACTURED
+      }
+    });
+
+    if (drugBatchArray[0] == undefined) {
+      return {
+        message: "No drug batch is shipped with id: " + shippingID + " yet!"
+      };
+    }
+
+    const drugBatch: DrugBatch = drugBatchArray[0];
+    await drugBatch.update({
+      state: State.IN_DISTRIBUTOR_STORAGE,
+      dateReceivedByDistributor: this.tx.stub.getDate().toString()
+    });
+
+    await distributor.save();]
+
+    return drugBatchArray;
+  }
 
   // @Service()
   // @Invokable()

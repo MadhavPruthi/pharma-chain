@@ -17,9 +17,9 @@ import { SaltBatch } from "./saltBatch.model";
 
 export enum State {
   DRUG_BATCH_MANUFACTURED,
-  SENT_TO_DISTRIBUTORS,
-  READY_FOR_DISTRIBUTION,
-  IMPORTED,
+  DRUG_BATCH_SHIPPED,
+  IN_DISTRIBUTOR_STORAGE,
+  RECEIVED_BY_PHARMACIST,
   READY_FOR_SALE
 }
 
@@ -60,6 +60,9 @@ export class DrugBatch extends ConvectorModel<DrugBatch> {
   public manufacturingDate: string;
 
   @Validate(yup.string())
+  public shippingId: string;
+
+  @Validate(yup.string())
   public dateShippedFromManufacturer: string;
 
   @Validate(yup.string())
@@ -73,15 +76,17 @@ export class DrugBatch extends ConvectorModel<DrugBatch> {
 
   @Required()
   @ReadOnly()
+  @Validate(Supplier)
   public supplier: FlatConvectorModel<Supplier>;
 
   @Required()
   @ReadOnly()
+  @Validate(Manufacturer)
   public manufacturer: FlatConvectorModel<Manufacturer>;
 
-  //   @Default(undefined)
+  @Validate(Distributor)
   public distributor: FlatConvectorModel<Distributor>;
 
-  //   @Default(undefined)
+  @Validate(Pharmacist)
   public pharmacist: FlatConvectorModel<Pharmacist>;
 }
