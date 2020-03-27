@@ -8,7 +8,6 @@ import {
   FlatConvectorModel
 } from "@worldsibu/convector-core-model";
 
-import { Salt } from "./salt.model";
 import { Supplier } from "./Supplier.model";
 import { Manufacturer } from "./Manufacturer.model";
 import { Distributor } from "./Distributor.model";
@@ -67,9 +66,6 @@ export class DrugBatch extends ConvectorModel<DrugBatch> {
 
   @Validate(yup.string())
   public dateReceivedByDistributor: string;
-
-  @Validate(yup.string())
-  public dateShippedFromDistributor: string;
 
   @Validate(yup.string())
   public dateReceivedByPharmacist: string;

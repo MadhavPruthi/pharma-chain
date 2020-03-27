@@ -381,7 +381,7 @@ export class SupplychainController extends ConvectorController {
       state: State.DRUG_BATCH_SHIPPED,
       shippingId: shippingID,
       distributor: distributor,
-      dateShippedFromManufacturer:this.tx.stub.getDate().toString()
+      dateShippedFromManufacturer: this.tx.stub.getDate().toString()
     });
 
     await distributor.save();
@@ -423,67 +423,109 @@ export class SupplychainController extends ConvectorController {
       dateReceivedByDistributor: this.tx.stub.getDate().toString()
     });
 
-    await distributor.save();]
+    await distributor.save();
 
     return drugBatchArray;
   }
 
-  // @Service()
-  // @Invokable()
-  // public async orderProductsFromDistributor(
-  //   @Param(yup.string())
-  //   PharmacistId: string,
-  //   @Param(yup.string())
-  //   distributorId: string,
-  //   @Param(yup.number())
-  //   orderedProducts: number
-  // ) {
-  //   const Pharmacist = await Pharmacist.getOne(PharmacistId);
-  //   Pharmacist.productsOrdered = Pharmacist.productsOrdered + orderedProducts;
-  //   const distributor = await Distributor.getOne(distributorId);
-  //   distributor.productsToBeShipped = distributor.productsToBeShipped - orderedProducts;
-  //   distributor.productsShipped = distributor.productsShipped + orderedProducts;
+  @Service()
+  @Invokable()
+  public async exportProductsToPharmacist(
+    @Param(yup.string())
+    pharmacistID: string,
+    @Param(yup.string())
+    distributorId: string,
+    @Param(yup.string())
+    batchId: string
+  ) {
+    const distributor = await Distributor.getOne(distributorId);
 
-  //   await Pharmacist.save();
-  //   await distributor.save();
-  // }
+    if (distributor.id == null) {
+      throw new Error("Diistributor with id: " + distributorId + " doesn't exist");
+    }
 
-  // @Service()
-  // @Invokable()
-  // public async receiveProductsFromDistributor(
-  //   @Param(yup.string())
-  //   PharmacistId: string,
-  //   @Param(yup.string())
-  //   distributorId: string,
-  //   @Param(yup.number())
-  //   receivedProducts: number
-  // ) {
-  //   const Pharmacist = await Pharmacist.getOne(PharmacistId);
-  //   Pharmacist.productsAvailable = Pharmacist.productsAvailable + receivedProducts;
-  //   const distributor = await Distributor.getOne(distributorId);
-  //   distributor.productsReceived = distributor.productsReceived + receivedProducts;
+    let pharmacist = await Pharmacist.getOne(pharmacistID);
+    let drugBatchArray = await DrugBatch.query(DrugBatch, {
+      selector: {
+        id: batchId,
+        distributor: {
+          distributorId
+        },
+        state: State.IN_DISTRIBUTOR_STORAGE
+      }
+    });
 
-  //   await Pharmacist.save();
-  //   await distributor.save();
-  // }
+    let drugBatch: DrugBatch = drugBatchArray[0];
+    if (drugBatch.id == undefined) {
+      throw new Error("No Batch exist with given paramters");
+    }
 
-  // @Service()
-  // @Invokable()
-  // public async buyProductsFromPharmacist(
-  //   @Param(yup.string())
-  //   PharmacistId: string,
-  //   @Param(yup.string())
-  //   customerId: string,
-  //   @Param(yup.number())
-  //   boughtProducts: number
-  // ) {
-  //   const Pharmacist = await Pharmacist.getOne(PharmacistId);
-  //   Pharmacist.productsAvailable = Pharmacist.productsAvailable - boughtProducts;
-  //   Pharmacist.productsSold = Pharmacist.productsSold + boughtProducts;
-  //   const customer = await Customer.getOne(customerId);
-  //   customer.productsBought = customer.productsBought + boughtProducts;
+    await drugBatch.update({
+      pharmacist: pharmacist,
+      state: State.RECEIVED_BY_PHARMACIST,
+      dateReceivedByPharmacist: this.tx.stub.getDate(),
+      owner: this.sender
+    });
 
-  //   await Pharmacist.save();
-  //   await customer.save();
-  // }
+    await pharmacist.update({
+      drugBatchsAvailable: pharmacist.drugBatchsAvailable + 1
+    });
+  }
+
+  @Service()
+  @Invokable()
+  public async buyProductsFromPharmacist(
+    @Param(yup.string())
+    pharmacistId: string,
+    @Param(yup.string())
+    drugName: string,
+    @Param(yup.number())
+    boughtProducts: number,
+    @Param(yup.string())
+    customerID: string,
+    @Param(yup.string())
+    invoiceNumber: string
+  ) {
+    const pharmacist = await Pharmacist.getOne(pharmacistId);
+    if (pharmacist.id == null) {
+      throw new Error("Diistributor with id: " + pharmacistId + " doesn't exist");
+    }
+
+    // Todo: selling medicines from multiple batches
+
+    let drugBatchArray = await DrugBatch.query(DrugBatch, {
+      selector: {
+        name: drugName,
+        amount: { $gt: boughtProducts },
+        pharmacist: {
+          id: pharmacistId
+        }
+      },
+      sort: [{ amount: "desc" }]
+    });
+
+    let drugBatch: DrugBatch = drugBatchArray[0];
+    if (drugBatch == undefined) {
+      throw new Error("Required Amount not present in storage!");
+    }
+
+    await drugBatch.update({
+      amount: drugBatch.amount - boughtProducts
+    });
+
+    let drug = new Drug();
+    drug.id = Math.random()
+      .toString(36)
+      .substring(7);
+
+    drug.name = drugName;
+    drug.batch = drugBatch;
+    drug.amount = boughtProducts;
+    drug.dateSold = this.tx.stub.getDate();
+    drug.invoiceNumber = invoiceNumber;
+    drug.customerID = customerID;
+
+    await drug.save();
+    return drug;
+  }
 }

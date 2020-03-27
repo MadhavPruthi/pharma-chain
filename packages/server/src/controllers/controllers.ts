@@ -200,3 +200,25 @@ export async function SupplychainController_manufactureDrugs_post(req: Request, 
         res.status(500).send(ex);
     }
 }
+export async function SupplychainController_shipProductsFromManufacturerToDistributor_post(req: Request, res: Response): Promise<void>{
+    try{
+        let params = req.body;
+            res.status(200).send(await SupplychainControllerBackEnd
+                .shipProductsFromManufacturerToDistributor(params.manufacturerId,params.distributorId,params.drugName,params.shippingID));
+            
+    } catch(ex) {
+        console.log('Error post SupplychainController_shipProductsFromManufacturerToDistributor', ex.stack);
+        res.status(500).send(ex);
+    }
+}
+export async function SupplychainController_receiveProductsFromManufacturerByDistributor_post(req: Request, res: Response): Promise<void>{
+    try{
+        let params = req.body;
+            res.status(200).send(await SupplychainControllerBackEnd
+                .receiveProductsFromManufacturerByDistributor(params.distributorId,params.shippingID));
+            
+    } catch(ex) {
+        console.log('Error post SupplychainController_receiveProductsFromManufacturerByDistributor', ex.stack);
+        res.status(500).send(ex);
+    }
+}

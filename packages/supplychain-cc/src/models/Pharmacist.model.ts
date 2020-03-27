@@ -1,16 +1,10 @@
-import * as yup from 'yup';
-import {
-  ConvectorModel,
-  Default,
-  ReadOnly,
-  Required,
-  Validate
-} from '@worldsibu/convector-core-model';
+import * as yup from "yup";
+import { ConvectorModel, Default, ReadOnly, Required, Validate } from "@worldsibu/convector-core-model";
 
 export class Pharmacist extends ConvectorModel<Pharmacist> {
   @ReadOnly()
   @Required()
-  public readonly type:string = 'io.pharmachain.Pharmacist';
+  public readonly type: string = "io.pharmachain.Pharmacist";
 
   public x509Identity: string;
 
@@ -28,11 +22,7 @@ export class Pharmacist extends ConvectorModel<Pharmacist> {
 
   @Required()
   @Validate(yup.number())
-  public drugsOrdered: number = 0;
-
-  @Required()
-  @Validate(yup.number())
-  public drugsAvailable: number = 0;
+  public drugBatchsAvailable: number = 0;
 
   @Required()
   @Validate(yup.number())

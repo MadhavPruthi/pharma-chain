@@ -1,4 +1,4 @@
-import * as yup from 'yup';
+import * as yup from "yup";
 import {
   ConvectorModel,
   Default,
@@ -6,13 +6,13 @@ import {
   Required,
   Validate,
   FlatConvectorModel
-} from '@worldsibu/convector-core-model';
-import { DrugBatch } from './drugBatch.model';
+} from "@worldsibu/convector-core-model";
+import { DrugBatch } from "./drugBatch.model";
 
 export class Drug extends ConvectorModel<Drug> {
   @ReadOnly()
   @Required()
-  public readonly type = 'io.pharmachain.drug';
+  public readonly type = "io.pharmachain.drug";
 
   @Required()
   @Validate(yup.string())
@@ -23,7 +23,7 @@ export class Drug extends ConvectorModel<Drug> {
 
   @Required()
   @Validate(yup.date())
-  public dateSold:Date;
+  public dateSold: Date;
 
   @Required()
   @Validate(yup.number())
@@ -31,7 +31,8 @@ export class Drug extends ConvectorModel<Drug> {
 
   @Required()
   @Validate(yup.string())
-  public invoiceNumber:string;
+  public invoiceNumber: string;
 
-
+  @Validate(yup.string())
+  public customerID: string;
 }

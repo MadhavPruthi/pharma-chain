@@ -88,5 +88,25 @@
     "function": "manufactureDrugs",
     "verb": "post",
     "controller": "SupplychainController"
+  },
+  {
+    "function": "shipProductsFromManufacturerToDistributor",
+    "verb": "post",
+    "controller": "SupplychainController"
+  },
+  {
+    "function": "receiveProductsFromManufacturerByDistributor",
+    "verb": "post",
+    "controller": "SupplychainController"
+  },
+  {
+    "function": "exportProductsToPharmacist",
+    "verb": "post",
+    "controller": "SupplychainController"
+  },
+  {
+    "function": "buyProductsFromPharmacist",
+    "verb": "post",
+    "controller": "SupplychainController"
   }
 ]

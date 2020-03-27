@@ -17,7 +17,9 @@ import {
     SupplychainController_getAllModels_get,
     SupplychainController_fetchSalts_post,
     SupplychainController_getRawMaterialFromSupplier_post,
-    SupplychainController_manufactureDrugs_post } from './controllers'
+    SupplychainController_manufactureDrugs_post,
+    SupplychainController_shipProductsFromManufacturerToDistributor_post,
+    SupplychainController_receiveProductsFromManufacturerByDistributor_post } from './controllers'
 export default express.Router()
 .post('/supplychain/createSupplier', SupplychainController_createSupplier_post)
 .post('/supplychain/createManufacturer', SupplychainController_createManufacturer_post)
@@ -37,3 +39,5 @@ export default express.Router()
 .post('/supplychain/fetchSalts', SupplychainController_fetchSalts_post)
 .post('/supplychain/getRawMaterialFromSupplier', SupplychainController_getRawMaterialFromSupplier_post)
 .post('/supplychain/manufactureDrugs', SupplychainController_manufactureDrugs_post)
+.post('/supplychain/shipProductsFromManufacturerToDistributor', SupplychainController_shipProductsFromManufacturerToDistributor_post)
+.post('/supplychain/receiveProductsFromManufacturerByDistributor', SupplychainController_receiveProductsFromManufacturerByDistributor_post)
