@@ -222,3 +222,25 @@ export async function SupplychainController_receiveProductsFromManufacturerByDis
         res.status(500).send(ex);
     }
 }
+export async function SupplychainController_exportProductsToPharmacist_post(req: Request, res: Response): Promise<void>{
+    try{
+        let params = req.body;
+            res.status(200).send(await SupplychainControllerBackEnd
+                .exportProductsToPharmacist(params.pharmacistID,params.distributorId,params.batchId));
+            
+    } catch(ex) {
+        console.log('Error post SupplychainController_exportProductsToPharmacist', ex.stack);
+        res.status(500).send(ex);
+    }
+}
+export async function SupplychainController_buyProductsFromPharmacist_post(req: Request, res: Response): Promise<void>{
+    try{
+        let params = req.body;
+            res.status(200).send(await SupplychainControllerBackEnd
+                .buyProductsFromPharmacist(params.pharmacistId,params.drugName,params.boughtProducts,params.customerID,params.invoiceNumber));
+            
+    } catch(ex) {
+        console.log('Error post SupplychainController_buyProductsFromPharmacist', ex.stack);
+        res.status(500).send(ex);
+    }
+}

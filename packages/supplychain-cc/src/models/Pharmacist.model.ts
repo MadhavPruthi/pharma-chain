@@ -6,6 +6,7 @@ export class Pharmacist extends ConvectorModel<Pharmacist> {
   @Required()
   public readonly type: string = "io.pharmachain.Pharmacist";
 
+  @Validate(yup.string())
   public x509Identity: string;
 
   @Required()

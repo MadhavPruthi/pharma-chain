@@ -32,6 +32,7 @@ export class DrugBatch extends ConvectorModel<DrugBatch> {
   public name: string;
 
   @Required()
+  @Validate(yup.number())
   public state: State;
 
   @Required()
@@ -59,6 +60,7 @@ export class DrugBatch extends ConvectorModel<DrugBatch> {
   public manufacturingDate: string;
 
   @Validate(yup.string())
+  @Default("")
   public shippingId: string;
 
   @Validate(yup.string())
