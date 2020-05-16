@@ -5,6 +5,7 @@ import { Supplier } from "./models/Supplier.model";
 import { Manufacturer } from "./models/Manufacturer.model";
 import { Distributor } from "./models/Distributor.model";
 import { Pharmacist } from "./models/Pharmacist.model";
+import { ChaincodeTx } from "@worldsibu/convector-core-chaincode";
 
 import { GetById, GetAll, Create, Service } from "@worldsibu/convector-rest-api-decorators";
 import { DrugBatch, State } from "./models/drugBatch.model";
@@ -14,7 +15,7 @@ import { Salt } from "./models/salt.model";
 import { SaltBatch } from "./models/saltBatch.model";
 
 @Controller("supplychain")
-export class SupplychainController extends ConvectorController {
+export class SupplychainController extends ConvectorController<ChaincodeTx> {
   /* 
   // Create Instances of Participants 
   */
@@ -167,6 +168,32 @@ export class SupplychainController extends ConvectorController {
     console.log(storedSuppliers);
   }
 
+  /* get Salt Drug Info */
+
+  @GetAll("DrugBatch")
+  @Invokable()
+  public async getAllDrugBatchs() {
+    const storedDrugBatchs = await DrugBatch.getAll<DrugBatch>();
+    return storedDrugBatchs;
+  }
+
+  @GetAll("SaltBatch")
+  @Invokable()
+  public async getAllSaltBatchs() {
+    const storedSaltBatchs = await SaltBatch.getAll<SaltBatch>();
+    return storedSaltBatchs;
+  }
+
+  @GetById("DrugBatch")
+  @Invokable()
+  public async getDrugBatchHistory(
+    @Param(yup.string())
+    drugBatchId: string
+  ) {
+    const drugBatch = await DrugBatch.getOne(drugBatchId);
+    return drugBatch.history();
+  }
+
   /*
   // Transactions
   */
@@ -201,9 +228,7 @@ export class SupplychainController extends ConvectorController {
 
           if (!existBatch) {
             let saltBatch = new SaltBatch();
-            saltBatch.id = Math.random()
-              .toString(36)
-              .substring(7);
+            saltBatch.id = Math.random().toString(36).substring(7);
             saltBatch.salt = salt;
             saltBatch.amount = amount;
             saltBatch.supplierId = supplier.id;
@@ -244,7 +269,7 @@ export class SupplychainController extends ConvectorController {
       const salt = await Salt.getOne(salt_id);
 
       if (salt.id != null) {
-        let saltIndexElementFromSupplier = supplier.rawMaterialAvailable.findIndex(saltBatch => {
+        let saltIndexElementFromSupplier = supplier.rawMaterialAvailable.findIndex((saltBatch) => {
           return saltBatch.salt.name == salt.name;
         });
 
@@ -256,9 +281,7 @@ export class SupplychainController extends ConvectorController {
 
           if (amount <= saltElementFromSupplier.amount) {
             let manufSaltBatch = new SaltBatch();
-            manufSaltBatch.id = Math.random()
-              .toString(36)
-              .substring(7);
+            manufSaltBatch.id = Math.random().toString(36).substring(7);
             manufSaltBatch.amount = amount;
             manufSaltBatch.salt = saltElementFromSupplier.salt;
             manufSaltBatch.saltId = salt_id;
@@ -313,7 +336,7 @@ export class SupplychainController extends ConvectorController {
 
     for (let salt_id of Object.keys(rawMaterialConsumed)) {
       let rawMaterialSupply = manufacturer.rawMaterialAvailable;
-      const index = rawMaterialSupply.findIndex(saltBatch => {
+      const index = rawMaterialSupply.findIndex((saltBatch) => {
         return saltBatch.saltId == salt_id;
       });
 
@@ -334,10 +357,8 @@ export class SupplychainController extends ConvectorController {
       }
     }
     drugBatch.manufacturer = manufacturer;
-    drugBatch.manufacturingDate = this.tx.stub.getTxDate();
-    drugBatch.id = Math.random()
-      .toString(36)
-      .substring(7);
+    drugBatch.manufacturingDate = this.tx.stub.getTxDate().toDateString();
+    drugBatch.id = Math.random().toString(36).substring(7);
     await drugBatch.save();
     await manufacturer.save();
   }
@@ -365,15 +386,15 @@ export class SupplychainController extends ConvectorController {
       selector: {
         name: drugName,
         manufacturer: {
-          id: manufacturerId
+          id: manufacturerId,
         },
-        state: State.DRUG_BATCH_MANUFACTURED
-      }
+        state: State.DRUG_BATCH_MANUFACTURED,
+      },
     });
 
     if (drugBatchArray[0] == undefined) {
       return {
-        message: "No drug batch is available yet!"
+        message: "No drug batch is available yet!",
       };
     }
 
@@ -382,7 +403,7 @@ export class SupplychainController extends ConvectorController {
       state: State.DRUG_BATCH_SHIPPED,
       shippingId: shippingID,
       distributor: distributor,
-      dateShippedFromManufacturer: this.tx.stub.getTxDate().toString()
+      dateShippedFromManufacturer: this.tx.stub.getTxDate().toString(),
     });
 
     await distributor.save();
@@ -408,20 +429,20 @@ export class SupplychainController extends ConvectorController {
     const drugBatchArray = await DrugBatch.query(DrugBatch, {
       selector: {
         shippingId: shippingID,
-        state: State.DRUG_BATCH_SHIPPED
-      }
+        state: State.DRUG_BATCH_SHIPPED,
+      },
     });
 
     if (drugBatchArray[0] == undefined) {
       return {
-        message: "No drug batch is shipped with id: " + shippingID + " yet!"
+        message: "No drug batch is shipped with id: " + shippingID + " yet!",
       };
     }
 
     const drugBatch: DrugBatch = drugBatchArray[0];
     await drugBatch.update({
       state: State.IN_DISTRIBUTOR_STORAGE,
-      dateReceivedByDistributor: this.tx.stub.getTxDate().toString()
+      dateReceivedByDistributor: this.tx.stub.getTxDate().toString(),
     });
 
     await distributor.save();
@@ -451,10 +472,10 @@ export class SupplychainController extends ConvectorController {
     let drugBatchArray = await DrugBatch.query(DrugBatch, {
       selector: {
         distributor: {
-          id: distributorId
+          id: distributorId,
         },
-        state: State.IN_DISTRIBUTOR_STORAGE
-      }
+        state: State.IN_DISTRIBUTOR_STORAGE,
+      },
     });
 
     let drugBatch: DrugBatch = drugBatchArray[0];
@@ -465,12 +486,12 @@ export class SupplychainController extends ConvectorController {
     await drugBatch.update({
       pharmacist: pharmacist,
       state: State.RECEIVED_BY_PHARMACIST,
-      dateReceivedByPharmacist: this.tx.stub.getTxDate(),
-      owner: this.sender
+      dateReceivedByPharmacist: this.tx.stub.getTxDate().toDateString(),
+      owner: this.sender,
     });
 
     await pharmacist.update({
-      drugBatchsAvailable: pharmacist.drugBatchsAvailable + 1
+      drugBatchsAvailable: pharmacist.drugBatchsAvailable + 1,
     });
   }
 
@@ -500,9 +521,9 @@ export class SupplychainController extends ConvectorController {
         name: drugName,
         amount: { $gt: boughtProducts },
         pharmacist: {
-          id: pharmacistId
-        }
-      }
+          id: pharmacistId,
+        },
+      },
     });
 
     let drugBatchArray: DrugBatch[] = drugBatchArrayFetch as any;
@@ -518,13 +539,11 @@ export class SupplychainController extends ConvectorController {
     }
 
     await drugBatch.update({
-      amount: drugBatch.amount - boughtProducts
+      amount: drugBatch.amount - boughtProducts,
     });
 
     let drug = new Drug();
-    drug.id = Math.random()
-      .toString(36)
-      .substring(7);
+    drug.id = Math.random().toString(36).substring(7);
 
     drug.name = drugName;
     drug.batch = drugBatch;

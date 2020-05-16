@@ -167,6 +167,39 @@ export async function SupplychainController_getAllModels_get(req: Request, res: 
         res.status(500).send(ex);
     }
 }
+export async function SupplychainController_getAllDrugBatchs_get(req: Request, res: Response): Promise<void>{
+    try{
+        let params = req.params;
+        res.status(200).send(await SupplychainControllerBackEnd
+            .getAllDrugBatchs());
+        
+    } catch(ex) {
+        console.log('Error get SupplychainController_getAllDrugBatchs', ex.stack);
+        res.status(500).send(ex);
+    }
+}
+export async function SupplychainController_getAllSaltBatchs_get(req: Request, res: Response): Promise<void>{
+    try{
+        let params = req.params;
+        res.status(200).send(await SupplychainControllerBackEnd
+            .getAllSaltBatchs());
+        
+    } catch(ex) {
+        console.log('Error get SupplychainController_getAllSaltBatchs', ex.stack);
+        res.status(500).send(ex);
+    }
+}
+export async function SupplychainController_getDrugBatchHistory_get(req: Request, res: Response): Promise<void>{
+    try{
+        let params = req.params;
+        res.status(200).send(await SupplychainControllerBackEnd
+            .getDrugBatchHistory(params.drugBatchId));
+        
+    } catch(ex) {
+        console.log('Error get SupplychainController_getDrugBatchHistory', ex.stack);
+        res.status(500).send(ex);
+    }
+}
 export async function SupplychainController_fetchSalts_post(req: Request, res: Response): Promise<void>{
     try{
         let params = req.body;

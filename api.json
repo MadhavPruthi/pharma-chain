@@ -75,6 +75,21 @@
     "verb": "get"
   },
   {
+    "function": "getAllDrugBatchs",
+    "controller": "SupplychainController",
+    "verb": "get"
+  },
+  {
+    "function": "getAllSaltBatchs",
+    "controller": "SupplychainController",
+    "verb": "get"
+  },
+  {
+    "function": "getDrugBatchHistory",
+    "controller": "SupplychainController",
+    "verb": "get"
+  },
+  {
     "function": "fetchSalts",
     "controller": "SupplychainController",
     "verb": "post"
