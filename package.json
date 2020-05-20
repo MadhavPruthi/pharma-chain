@@ -7,7 +7,8 @@
   ],
   "scripts": {
     "install": "npm-run-all -s lerna:install",
-    "env:restart": "hurl new -u 3 -o 4",
+    "env:restart": "hurl new -o 1 -u 5",
+    "seed": "./seed-data.sh",
     "test": "npm-run-all -s lerna:test",
     "test:e2e": "npm-run-all -s lerna:test:e2e",
     "env:clean": "hurl clean",

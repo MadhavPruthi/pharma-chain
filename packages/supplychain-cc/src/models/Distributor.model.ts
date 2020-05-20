@@ -1,19 +1,17 @@
-import * as yup from 'yup';
-import {
-  ConvectorModel,
-  Default,
-  ReadOnly,
-  Required,
-  Validate
-} from '@worldsibu/convector-core-model';
+import * as yup from "yup";
+import { ConvectorModel, Default, ReadOnly, Required, Validate } from "@worldsibu/convector-core-model";
 
 export class Distributor extends ConvectorModel<Distributor> {
   @ReadOnly()
   @Required()
-  public readonly type:string = 'io.pharmachain.Distributor';
+  public readonly type: string = "io.pharmachain.Distributor";
 
   @Validate(yup.string())
   public x509Identity: string;
+
+  @ReadOnly()
+  @Validate(yup.string())
+  public msp: string;
 
   @Required()
   @Validate(yup.string())

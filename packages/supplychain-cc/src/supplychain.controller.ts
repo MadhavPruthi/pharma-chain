@@ -28,6 +28,7 @@ export class SupplychainController extends ConvectorController<ChaincodeTx> {
   ) {
     supplier.x509Identity = this.sender;
     supplier.rawMaterialAvailable = [];
+    supplier.msp = this.tx.identity.getMSPID();
     console.log("Executed!!");
     await supplier.save();
   }
@@ -39,6 +40,7 @@ export class SupplychainController extends ConvectorController<ChaincodeTx> {
     manufacturer: Manufacturer
   ) {
     manufacturer.x509Identity = this.sender;
+    manufacturer.msp = this.tx.identity.getMSPID();
     await manufacturer.save();
   }
 
@@ -49,6 +51,7 @@ export class SupplychainController extends ConvectorController<ChaincodeTx> {
     distributor: Distributor
   ) {
     distributor.x509Identity = this.sender;
+    distributor.msp = this.tx.identity.getMSPID();
     await distributor.save();
   }
 
@@ -59,6 +62,7 @@ export class SupplychainController extends ConvectorController<ChaincodeTx> {
     pharmacist: Pharmacist
   ) {
     pharmacist.x509Identity = this.sender;
+    pharmacist.msp = this.tx.identity.getMSPID();
     await pharmacist.save();
   }
 

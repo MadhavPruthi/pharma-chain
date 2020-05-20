@@ -5,7 +5,7 @@ import {
   ReadOnly,
   Required,
   Validate,
-  FlatConvectorModel
+  FlatConvectorModel,
 } from "@worldsibu/convector-core-model";
 import { SaltBatch } from "./saltBatch.model";
 
@@ -16,6 +16,10 @@ export class Supplier extends ConvectorModel<Supplier> {
 
   @Validate(yup.string())
   public x509Identity: string;
+
+  @ReadOnly()
+  @Validate(yup.string())
+  public msp: string;
 
   @Required()
   @Validate(yup.string())

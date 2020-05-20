@@ -5,7 +5,7 @@ import {
   ReadOnly,
   Required,
   Validate,
-  FlatConvectorModel
+  FlatConvectorModel,
 } from "@worldsibu/convector-core-model";
 
 import { Salt } from "./salt.model";
@@ -17,6 +17,10 @@ export class Manufacturer extends ConvectorModel<Manufacturer> {
   public readonly type: string = "io.pharmachain.Manufacturer";
 
   public x509Identity: string;
+
+  @ReadOnly()
+  @Validate(yup.string())
+  public msp: string;
 
   @Required()
   @Validate(yup.string())
