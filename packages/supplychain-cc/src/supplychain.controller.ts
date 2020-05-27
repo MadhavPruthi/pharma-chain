@@ -1,6 +1,6 @@
 import * as yup from "yup";
 import { Controller, ConvectorController, Invokable, Param } from "@worldsibu/convector-core-controller";
-
+import { ConvectorModel } from "@worldsibu/convector-core-model";
 import { Supplier } from "./models/Supplier.model";
 import { Manufacturer } from "./models/Manufacturer.model";
 import { Distributor } from "./models/Distributor.model";
@@ -652,5 +652,31 @@ export class SupplychainController extends ConvectorController<ChaincodeTx> {
 
     await drug.save();
     return drug;
+  }
+
+  @Service()
+  @Invokable()
+  public async getAllTransactions() {
+    var listOfModels: any[] = [Salt, SaltBatch, Drug, DrugBatch, Supplier, Manufacturer, Distributor, Pharmacist];
+
+    let transactionHistory = new Array<{ value: any; type: string }>();
+    var test: string;
+    for (let val of listOfModels) {
+      let allValues: any[] = await val.getAll();
+      for (let f of allValues) {
+        test = f._id || f.id;
+        let history = await this.tx.stub.getHistoryForKeyAsList(f._id || f.id);
+        for (let singleHistory of history) {
+          var type = (f.id || f._id) + (" : " + val.name); //
+          transactionHistory.push({ value: singleHistory, type: type });
+        }
+      }
+    }
+    transactionHistory.sort((a, b) => {
+      if (a.value.timestamp.low > b.value.timestamp.low) return -1;
+      return 1;
+    });
+
+    return transactionHistory;
   }
 }

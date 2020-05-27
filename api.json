@@ -128,5 +128,10 @@
     "function": "buyProductsFromPharmacist",
     "verb": "post",
     "controller": "SupplychainController"
+  },
+  {
+    "function": "getAllTransactions",
+    "verb": "get",
+    "controller": "SupplychainController"
   }
 ]

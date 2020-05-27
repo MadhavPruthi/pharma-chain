@@ -19,6 +19,9 @@ npm run server:rest-api
 # If you want to add new function to the controller
 # Add the required function in the controller.ts and update the api.json file
 # stop the running server by Ctrl + c
+# Generate the server package again
+conv-rest-api generate api -c supplychain -f ./supplychain.config.json
+# Restart the server with saved changes
 npm run server:refresh-api -- supplychain <new-version like 1.1>
 ```
 

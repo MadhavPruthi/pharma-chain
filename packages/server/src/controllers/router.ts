@@ -25,7 +25,8 @@ import {
     SupplychainController_shipProductsFromManufacturerToDistributor_post,
     SupplychainController_receiveProductsFromManufacturerByDistributor_post,
     SupplychainController_exportProductsToPharmacist_post,
-    SupplychainController_buyProductsFromPharmacist_post } from './controllers'
+    SupplychainController_buyProductsFromPharmacist_post,
+    SupplychainController_getAllTransactions_get } from './controllers'
 export default express.Router()
 .post('/supplychain/createSupplier', SupplychainController_createSupplier_post)
 .post('/supplychain/createManufacturer', SupplychainController_createManufacturer_post)
@@ -53,3 +54,4 @@ export default express.Router()
 .post('/supplychain/receiveProductsFromManufacturerByDistributor', SupplychainController_receiveProductsFromManufacturerByDistributor_post)
 .post('/supplychain/exportProductsToPharmacist', SupplychainController_exportProductsToPharmacist_post)
 .post('/supplychain/buyProductsFromPharmacist', SupplychainController_buyProductsFromPharmacist_post)
+.get('/supplychain/getAllTransactions', SupplychainController_getAllTransactions_get)
