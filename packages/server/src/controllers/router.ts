@@ -14,6 +14,7 @@ import {
     SupplychainController_getDistributorById_get,
     SupplychainController_getAllPharmacists_get,
     SupplychainController_getPharmacistById_get,
+    SupplychainController_getDrugBatchByParticipant_get,
     SupplychainController_getAllModels_get,
     SupplychainController_getAllDrugBatchs_get,
     SupplychainController_getAllSaltBatchs_get,
@@ -40,6 +41,7 @@ export default express.Router()
 .get('/supplychain/getDistributorById/:distributorId', SupplychainController_getDistributorById_get)
 .get('/supplychain/getAllPharmacists', SupplychainController_getAllPharmacists_get)
 .get('/supplychain/getPharmacistById/:pharmacistId', SupplychainController_getPharmacistById_get)
+.get('/supplychain/getDrugBatchByParticipant/:id/:type', SupplychainController_getDrugBatchByParticipant_get)
 .get('/supplychain/getAllModels', SupplychainController_getAllModels_get)
 .get('/supplychain/getAllDrugBatchs', SupplychainController_getAllDrugBatchs_get)
 .get('/supplychain/getAllSaltBatchs', SupplychainController_getAllSaltBatchs_get)

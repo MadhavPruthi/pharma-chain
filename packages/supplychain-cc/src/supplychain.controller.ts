@@ -157,6 +157,100 @@ export class SupplychainController extends ConvectorController<ChaincodeTx> {
     const pharmacist = await Pharmacist.getOne(pharmacistId);
     return pharmacist;
   }
+
+  // @Invokable()
+  // public async getSaltBatchBySupplier(
+  //   @Param(yup.string())
+  //   supplierId: string
+  // ) {
+  //   const supplier = await Supplier.getOne(supplierId);
+  //   if (!supplier && !supplier.id) {
+  //     throw new Error("Supplier with id: " + supplierId + " doesn't  exist!");
+  //   }
+  //   const saltBatchArray = await SaltBatch.query(SaltBatch, {
+  //     selector: {
+  //       supplier: {
+  //         id: supplierId,
+  //       },
+  //     },
+  //   });
+  //   return saltBatchArray;
+  // }
+
+  // @Invokable()
+  // public async getSaltBatchByManufacturer(
+  //   @Param(yup.string())
+  //   manufacturerId: string
+  // ) {
+  //   const manufacturer = await Supplier.getOne(manufacturerId);
+  //   if (!manufacturer && !manufacturer.id) {
+  //     throw new Error("Supplier with id: " + manufacturerId + " doesn't  exist!");
+  //   }
+  //   const saltBatchArray = await SaltBatch.query(SaltBatch, {
+  //     selector: {
+  //       manufacturer: {
+  //         id: manufacturerId,
+  //       },
+  //     },
+  //   });
+  //   return saltBatchArray;
+  // }
+
+  @Invokable()
+  public async getDrugBatchByParticipant(
+    @Param(yup.string())
+    id: string,
+    @Param(yup.string())
+    type: string
+  ) {
+    if (type == "manufacturer") {
+      const manufacturer = await Manufacturer.getOne(id);
+      if (!manufacturer && !manufacturer.id) {
+        throw new Error("Manufacturer with id: " + id + " doesn't  exist!");
+      }
+      const drugBatchArray = await DrugBatch.query(DrugBatch, {
+        selector: {
+          manufacturer: {
+            id: id,
+          },
+        },
+      });
+      return drugBatchArray;
+    }
+
+    if (type == "distributor") {
+      const distributor = await Distributor.getOne(id);
+      if (!distributor && !distributor.id) {
+        throw new Error("distributor with id: " + id + " doesn't  exist!");
+      }
+      const drugBatchArray = await DrugBatch.query(DrugBatch, {
+        selector: {
+          distributor: {
+            id: id,
+          },
+        },
+      });
+      return drugBatchArray;
+    }
+
+    if (type == "pharmacist") {
+      const pharmacist = await Pharmacist.getOne(id);
+      if (!pharmacist && !pharmacist.id) {
+        throw new Error("pharmacist with id: " + id + " doesn't  exist!");
+      }
+      const drugBatchArray = await DrugBatch.query(DrugBatch, {
+        selector: {
+          pharmacist: {
+            id: id,
+          },
+        },
+      });
+      return drugBatchArray;
+    }
+
+    throw new Error("Type is not correct");
+  }
+
   @Invokable()
   public async getAllModels() {
     const storedPharmacists = await Pharmacist.getAll<Pharmacist>();

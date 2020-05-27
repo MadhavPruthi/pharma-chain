@@ -156,6 +156,17 @@ export async function SupplychainController_getPharmacistById_get(req: Request, 
         res.status(500).send(ex);
     }
 }
+export async function SupplychainController_getDrugBatchByParticipant_get(req: Request, res: Response): Promise<void>{
+    try{
+        let params = req.params;
+        res.status(200).send(await SupplychainControllerBackEnd
+            .getDrugBatchByParticipant(params.id,params.type));
+        
+    } catch(ex) {
+        console.log('Error get SupplychainController_getDrugBatchByParticipant', ex.stack);
+        res.status(500).send(ex);
+    }
+}
 export async function SupplychainController_getAllModels_get(req: Request, res: Response): Promise<void>{
     try{
         let params = req.params;
