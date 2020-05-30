@@ -299,3 +299,14 @@ export async function SupplychainController_getAllTransactions_get(req: Request,
         res.status(500).send(ex);
     }
 }
+export async function SupplychainController_getDrugById_get(req: Request, res: Response): Promise<void>{
+    try{
+        let params = req.params;
+        res.status(200).send(await SupplychainControllerBackEnd
+            .getDrugById(params.drugId));
+        
+    } catch(ex) {
+        console.log('Error get SupplychainController_getDrugById', ex.stack);
+        res.status(500).send(ex);
+    }
+}

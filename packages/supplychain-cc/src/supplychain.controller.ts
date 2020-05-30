@@ -288,8 +288,20 @@ export class SupplychainController extends ConvectorController<ChaincodeTx> {
     @Param(yup.string())
     drugBatchId: string
   ) {
-    const drugBatch = await DrugBatch.getOne(drugBatchId);
+    const drugBatch = await DrugBatch.getOne<DrugBatch>(drugBatchId);
+    if (!drugBatch && !drugBatch.id) throw new Error("Drug Batch with id: " + drugBatchId + " doesn't exist!");
     return drugBatch.history();
+  }
+
+  @GetById("Drug")
+  @Invokable()
+  public async getDrugById(
+    @Param(yup.string())
+    drugId: string
+  ) {
+    const drug = await Drug.getOne<Drug>(drugId);
+    if (!drug.id) throw new Error("Drug with id: " + drugId + " doesn't exist!");
+    return drug;
   }
 
   /*

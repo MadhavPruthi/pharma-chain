@@ -133,5 +133,10 @@
     "function": "getAllTransactions",
     "verb": "get",
     "controller": "SupplychainController"
+  },
+  {
+    "function": "getDrugById",
+    "verb": "get",
+    "controller": "SupplychainController"
   }
 ]

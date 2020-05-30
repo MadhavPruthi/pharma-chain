@@ -5,7 +5,7 @@ import {
   ReadOnly,
   Required,
   Validate,
-  FlatConvectorModel
+  FlatConvectorModel,
 } from "@worldsibu/convector-core-model";
 import { DrugBatch } from "./drugBatch.model";
 
@@ -19,6 +19,7 @@ export class Drug extends ConvectorModel<Drug> {
   public name: string;
 
   @Required()
+  @Validate(DrugBatch)
   public batch: FlatConvectorModel<DrugBatch>;
 
   @Required()
