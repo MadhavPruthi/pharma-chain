@@ -310,3 +310,14 @@ export async function SupplychainController_getDrugById_get(req: Request, res: R
         res.status(500).send(ex);
     }
 }
+export async function SupplychainController_getAllDrugs_get(req: Request, res: Response): Promise<void>{
+    try{
+        let params = req.params;
+        res.status(200).send(await SupplychainControllerBackEnd
+            .getAllDrugs());
+        
+    } catch(ex) {
+        console.log('Error get SupplychainController_getAllDrugs', ex.stack);
+        res.status(500).send(ex);
+    }
+}

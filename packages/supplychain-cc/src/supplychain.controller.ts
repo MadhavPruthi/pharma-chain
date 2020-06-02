@@ -275,6 +275,13 @@ export class SupplychainController extends ConvectorController<ChaincodeTx> {
     return storedDrugBatchs;
   }
 
+  @GetAll("Drug")
+  @Invokable()
+  public async getAllDrugs() {
+    const storedDrug = await Drug.getAll<Drug>();
+    return storedDrug;
+  }
+
   @GetAll("SaltBatch")
   @Invokable()
   public async getAllSaltBatchs() {
@@ -469,6 +476,7 @@ export class SupplychainController extends ConvectorController<ChaincodeTx> {
     drugBatch.manufacturer = manufacturer;
     drugBatch.manufacturingDate = this.tx.stub.getTxDate().toDateString();
     drugBatch.id = Math.random().toString(36).substring(7);
+    manufacturer.batchManufacturedCount += 1;
     await drugBatch.save();
     await manufacturer.save();
   }
@@ -503,9 +511,7 @@ export class SupplychainController extends ConvectorController<ChaincodeTx> {
     });
 
     if (drugBatchArray[0] == undefined) {
-      return {
-        message: "No drug batch is available yet!",
-      };
+      throw new Error("No drug batch is available yet!");
     }
 
     const drugBatch: DrugBatch = drugBatchArray[0];
@@ -555,6 +561,8 @@ export class SupplychainController extends ConvectorController<ChaincodeTx> {
       dateReceivedByDistributor: this.tx.stub.getTxDate().toString(),
     });
 
+    distributor.batchReceived += 1;
+    distributor.batchToBeShipped += 1;
     await distributor.save();
 
     return drugBatchArray;
@@ -573,7 +581,7 @@ export class SupplychainController extends ConvectorController<ChaincodeTx> {
     const distributor = await Distributor.getOne(distributorId);
 
     if (distributor.id == null) {
-      throw new Error("Diistributor with id: " + distributorId + " doesn't exist");
+      throw new Error("Distributor with id: " + distributorId + " doesn't exist");
     }
 
     let pharmacist = await Pharmacist.getOne(pharmacistID);
@@ -584,6 +592,7 @@ export class SupplychainController extends ConvectorController<ChaincodeTx> {
         distributor: {
           id: distributorId,
         },
+        id: batchId,
         state: State.IN_DISTRIBUTOR_STORAGE,
       },
     });
@@ -598,6 +607,11 @@ export class SupplychainController extends ConvectorController<ChaincodeTx> {
       state: State.RECEIVED_BY_PHARMACIST,
       dateReceivedByPharmacist: this.tx.stub.getTxDate().toDateString(),
       owner: this.sender,
+    });
+
+    await distributor.update({
+      batchShipped: distributor.batchShipped + 1,
+      batchToBeShipped: distributor.batchToBeShipped - 1,
     });
 
     await pharmacist.update({
@@ -629,7 +643,7 @@ export class SupplychainController extends ConvectorController<ChaincodeTx> {
     let drugBatchArrayFetch = await DrugBatch.query(DrugBatch, {
       selector: {
         name: drugName,
-        amount: { $gt: boughtProducts },
+        amount: { $gte: boughtProducts },
         pharmacist: {
           id: pharmacistId,
         },

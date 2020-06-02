@@ -138,5 +138,10 @@
     "function": "getDrugById",
     "verb": "get",
     "controller": "SupplychainController"
+  },
+  {
+    "function": "getAllDrugs",
+    "verb": "get",
+    "controller": "SupplychainController"
   }
 ]
